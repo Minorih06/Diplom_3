@@ -19,17 +19,15 @@ public class RegistrationPage {
     }
 
     //поле "Имя"
-    private final By NAME_FIELD = By.xpath(".//label[text()='Имя']/following-sibling::input");
+    private static final By NAME_FIELD = By.xpath(".//label[text()='Имя']/following-sibling::input");
     //поле "Email"
-    private final By EMAIL_FIELD = By.xpath(".//label[text()='Email']/following-sibling::input");
+    private static final By EMAIL_FIELD = By.xpath(".//label[text()='Email']/following-sibling::input");
     //полу "Password"
-    private final By PASSWORD_FIELD = By.xpath(".//label[text()='Пароль']/following-sibling::input");
+    private static final By PASSWORD_FIELD = By.xpath(".//label[text()='Пароль']/following-sibling::input");
     //кнопка "Зарегистрироваться"
-    private final By REGISTRATION_BUTTON = By.xpath(".//button[text()='Зарегистрироваться']");
+    private static final By REGISTRATION_BUTTON = By.xpath(".//button[text()='Зарегистрироваться']");
     //кнопка "Войти"
-    private final By LOGIN_BUTTON = By.linkText("Войти");
-    //ошибка "Некорректный пароль"
-    private final By ERROR_PASSWORD = By.xpath(".//p[text()='Некорректный пароль']");
+    private static final By LOGIN_BUTTON = By.linkText("Войти");
 
     //Клик
     private void clickButton(By element) {

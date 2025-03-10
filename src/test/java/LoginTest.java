@@ -1,4 +1,5 @@
-import api.User;
+import constants.Endpoints;
+import model.User;
 import api.UserApi;
 import com.github.javafaker.Faker;
 import io.qameta.allure.Step;
@@ -9,17 +10,15 @@ import object.page.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utilits.BrowserUtilits;
 import utilits.ConfigReader;
 
 import java.time.Duration;
 
-
-import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertNotNull;
 
 public class LoginTest {
     private BrowserUtilits browserUtilits;
@@ -29,18 +28,19 @@ public class LoginTest {
 
     private String accessToken;
 
-    private final String NAME = faker.name().firstName();
-    private final String EMAIL = faker.internet().emailAddress();
-    private final String PASSWORD = faker.internet().password();
-
+    private final String name = faker.name().firstName();
+    private final String email = faker.internet().emailAddress();
+    private final String password = faker.internet().password();
 
     @Before
     public void before() {
-        RestAssured.baseURI = userApi.URL;
-        User user = new User(EMAIL, PASSWORD, NAME);
+        browserUtilits = new BrowserUtilits(ConfigReader.getProperty("browser"));
+
+        RestAssured.baseURI = Endpoints.HOME_PAGE.toString();
+        User user = new User(email, password, name);
         Response response = userApi.createUser(user);
         accessToken = userApi.getAccessToken(response);
-        browserUtilits = new BrowserUtilits(ConfigReader.getProperty("browser"));
+
         driver = browserUtilits.getDriver();
         driver.manage().window().maximize();
     }
@@ -48,7 +48,7 @@ public class LoginTest {
     @Test
     @DisplayName("Проверка входа по кнопке «Войти в аккаунт» на главной странице.")
     public void loginTheLoginToAccountButtonHomePageTest() {
-        driver.get(browserUtilits.getURL("HOME_PAGE"));
+        driver.get(Endpoints.HOME_PAGE.toString());
         HomePage homePage = new HomePage(driver);
         homePage.loginAccountButtonClick();
         authorization();
@@ -58,7 +58,7 @@ public class LoginTest {
     @Test
     @DisplayName("Проверка входа через кнопку «Личный кабинет» на главной странице.")
     public void loginThePersonalAccountButtonHomePageTest() {
-        driver.get(browserUtilits.getURL("HOME_PAGE"));
+        driver.get(Endpoints.HOME_PAGE.toString());
         HomePage homePage = new HomePage(driver);
         homePage.personalAccountButtonClick();
         authorization();
@@ -68,7 +68,7 @@ public class LoginTest {
     @Test
     @DisplayName("Проверка входа через «Войти» в форме регистрации.")
     public void loginTheLoginButtonRegistrationPage() {
-        driver.get(browserUtilits.getURL("REGISTRATION_PAGE"));
+        driver.get(Endpoints.REGISTRATION_PAGE.toString());
         RegistrationPage registrationPage = new RegistrationPage(driver);
         registrationPage.loginButtonClick();
         authorization();
@@ -78,7 +78,7 @@ public class LoginTest {
     @Test
     @DisplayName("Проверка входа через «Войти» в форме восстановления пароля.")
     public void loginTheLoginButtonPasswordRecoveryPage() {
-        driver.get(browserUtilits.getURL("PASSWORD_RECOVERY_PAGE"));
+        driver.get(Endpoints.PASSWORD_RECOVERY_PAGE.toString());
         PasswordRecoveryPage passwordRecoveryPage = new PasswordRecoveryPage(driver);
         passwordRecoveryPage.loginButtonClick();
         authorization();
@@ -88,17 +88,15 @@ public class LoginTest {
     @Step("Авторизация")
     public void authorization() {
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.loginPersonalAccount(EMAIL, PASSWORD);
+        loginPage.loginPersonalAccount(email, password);
     }
 
-    @Step("Проверяем, что пользователь авторизован")
+    @Step("Проверяем, что пользователь авторизован. accessToken, полученный при регистрации, равен accessToken, полученному после авторизации в ЛК.")
     public void checkedAuthorizedUser() {
-        HomePage homePage = new HomePage(driver);
-        PersonalAccountPage personalAccountPage = new PersonalAccountPage(driver);
-        homePage.personalAccountButtonClick();
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOfElementLocated(personalAccountPage.getEXIT_BUTTON()));
-        assertEquals(true, driver.findElement(personalAccountPage.getEXIT_BUTTON()).isDisplayed());
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        String tempAccessToken = wait.until(driver ->
+                (String) ((JavascriptExecutor) driver).executeScript("return localStorage.getItem('accessToken');"));
+        assertNotNull("accessToken = null. Авторизация не произошла", tempAccessToken);
     }
 
     @After

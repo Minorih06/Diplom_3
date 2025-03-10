@@ -1,12 +1,14 @@
 package object.page;
 
 import io.qameta.allure.Step;
-import lombok.Data;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-@Data
+import java.time.Duration;
+
 public class LoginPage {
     private WebDriver driver;
 
@@ -15,11 +17,11 @@ public class LoginPage {
     }
 
     //поле "Email"
-    private final By EMAIL_FIELD = By.xpath(".//label[text()='Email']/following-sibling::input");
+    private static final By EMAIL_FIELD = By.xpath(".//label[text()='Email']/following-sibling::input");
     //полу "Password"
-    private final By PASSWORD_FIELD = By.xpath(".//label[text()='Пароль']/following-sibling::input");
+    private static final By PASSWORD_FIELD = By.xpath(".//label[text()='Пароль']/following-sibling::input");
     //кнопка "Войти"
-    private final By LOGIN_BUTTON = By.xpath(".//button[text()='Войти']");
+    private static final By LOGIN_BUTTON = By.xpath(".//button[text()='Войти']");
 
 
     //Клик

@@ -16,7 +16,7 @@ public class PasswordRecoveryPage {
     }
 
     //кнопка "Войти"
-    private final By LOGIN_BUTTON = By.linkText("Войти");
+    private static final By LOGIN_BUTTON = By.linkText("Войти");
 
 
     private void clickButton (By element) {

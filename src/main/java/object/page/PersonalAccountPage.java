@@ -1,7 +1,6 @@
 package object.page;
 
 import io.qameta.allure.Step;
-import lombok.Data;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -9,7 +8,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-@Data
 public class PersonalAccountPage {
     private WebDriver driver;
 
@@ -18,10 +16,10 @@ public class PersonalAccountPage {
     }
 
     //кнопка "Выход"
-    private final By EXIT_BUTTON = By.xpath(".//button[text()='Выход']");
+    private static final By EXIT_BUTTON = By.xpath(".//button[text()='Выход']");
 
-    private final By STELLAR_BURGERS_BUTTON = By.className("AppHeader_header__logo__2D0X2");
-    private final By CONSTRUCTOR_BUTTON = By.xpath(".//p[text()='Конструктор']");
+    private static final By STELLAR_BURGERS_BUTTON = By.className("AppHeader_header__logo__2D0X2");
+    private static final By CONSTRUCTOR_BUTTON = By.xpath(".//p[text()='Конструктор']");
 
     //Клик
     private void clickButton (By element) {

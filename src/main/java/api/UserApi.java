@@ -2,6 +2,7 @@ package api;
 
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
+import model.User;
 import utilits.BrowserUtilits;
 
 import static io.restassured.RestAssured.given;
@@ -9,9 +10,6 @@ import static org.apache.http.HttpStatus.SC_ACCEPTED;
 import static org.apache.http.HttpStatus.SC_OK;
 
 public class UserApi {
-    BrowserUtilits browserUtilits = new BrowserUtilits();
-
-    public final String URL = browserUtilits.getURL("HOME_PAGE");
 
     private static final String CREATE_USER = "api/auth/register";
     private static final String LOGIN_USER = "api/auth/login";

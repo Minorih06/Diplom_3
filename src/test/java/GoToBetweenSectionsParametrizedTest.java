@@ -1,3 +1,4 @@
+import constants.Endpoints;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
@@ -20,14 +21,18 @@ import static org.junit.Assert.assertTrue;
 public class GoToBetweenSectionsParametrizedTest {
     private BrowserUtilits browserUtilits;
     private WebDriver driver;
-    private  HomePage homePage;
+    private HomePage homePage;
 
-    private By section;
-    private By expectedElement;
-    private boolean transitionSection; //необходимость переходной секции для активации инспектируемой секции
-    private String testName;
+    private static final By FILLING_EXPECTED = By.xpath(".//img[@alt='Биокотлета из марсианской Магнолии']/..");
+    private static final By SAUCE_EXPECTED = By.xpath(".//img[@alt='Соус Spicy-X']/..");
+    private static final By BUN_EXPECTED = By.xpath(".//img[@alt='Флюоресцентная булка R2-D3']/..");
 
-    public GoToBetweenSectionsParametrizedTest(By section, By expectedElement, boolean transitionSection, String testName) {
+    private final String section;
+    private final By expectedElement;
+    private final boolean transitionSection; //необходимость переходной секции для активации инспектируемой секции
+    private final String testName;
+
+    public GoToBetweenSectionsParametrizedTest(String section, By expectedElement, boolean transitionSection, String testName) {
         this.section = section;
         this.expectedElement = expectedElement;
         this.transitionSection = transitionSection;
@@ -36,12 +41,10 @@ public class GoToBetweenSectionsParametrizedTest {
 
     @Parameterized.Parameters(name = "{index}: {3}")
     public static Object[][] getElements() {
-        HomePage tempHomePage = new HomePage();
-
         return new Object[][] {
-                {tempHomePage.getFILINGS(), tempHomePage.getFilingExpected(), false, "\"Начинки\""},
-                {tempHomePage.getSAUCES(), tempHomePage.getSauceExpected(),false, "\"Соусы\""},
-                {tempHomePage.getBUNS(), tempHomePage.getBunExpected(), true, "\"Булки\""}
+                {"Начинки", FILLING_EXPECTED, false, "\"Начинки\""},
+                {"Соусы", SAUCE_EXPECTED, false, "\"Соусы\""},
+                {"Булки", BUN_EXPECTED, true, "\"Булки\""}
         };
     }
 
@@ -51,7 +54,7 @@ public class GoToBetweenSectionsParametrizedTest {
         driver = browserUtilits.getDriver();
         driver.manage().window().maximize();
         homePage = new HomePage(driver);
-        driver.get(browserUtilits.getURL("HOME_PAGE"));
+        driver.get(Endpoints.HOME_PAGE.toString());
     }
 
     @Test
@@ -60,9 +63,9 @@ public class GoToBetweenSectionsParametrizedTest {
         Allure.getLifecycle().updateTestCase(tc -> tc.setName("Тестирование перехода на секцию " + testName));
 
         if (transitionSection) {
-            homePage.clickButton(homePage.getFILINGS());
+            homePage.clickBurgerBuilderSection("Начинки");
         }
-        homePage.clickButton(section);
+        homePage.clickBurgerBuilderSection(section);
         WebElement webElement = driver.findElement(expectedElement);
         checkedViewportIngredientsSection(webElement);
     }

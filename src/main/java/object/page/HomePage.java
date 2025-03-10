@@ -1,15 +1,15 @@
 package object.page;
 
 import io.qameta.allure.Step;
-import lombok.Data;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
-@Data
 public class HomePage {
     private WebDriver driver;
 
@@ -21,18 +21,14 @@ public class HomePage {
 
     }
 
-    private final By LOGIN_ACCOUNT_BUTTON = By.xpath(".//button[text()='Войти в аккаунт']");
-    private final By PERSONAL_ACCOUNT_BUTTON = By.linkText("Личный Кабинет");
+    private static final By LOGIN_ACCOUNT_BUTTON = By.xpath(".//button[text()='Войти в аккаунт']");
+    private static final By PERSONAL_ACCOUNT_BUTTON = By.linkText("Личный Кабинет");
 
-    private final By BUILD_BURGER_TEXT = By.xpath(".//h1[text()='Соберите бургер']");
+    private static final By BUILD_BURGER_TEXT = By.xpath(".//h1[text()='Соберите бургер']");
 
-    private final By BUNS = By.xpath(".//span[text()='Булки']");
-    private final By SAUCES = By.xpath(".//span[text()='Соусы']");
-    private final By FILINGS = By.xpath(".//span[text()='Начинки']");
-
-    private By filingExpected = By.xpath(".//img[@alt='Биокотлета из марсианской Магнолии']/..");
-    private By sauceExpected = By.xpath(".//img[@alt='Соус Spicy-X']/..");
-    private By bunExpected = By.xpath(".//img[@alt='Флюоресцентная булка R2-D3']/..");
+    private static final By BUNS = By.xpath(".//span[text()='Булки']");
+    private static final By SAUCES = By.xpath(".//span[text()='Соусы']");
+    private static final By FILINGS = By.xpath(".//span[text()='Начинки']");
 
     //Клик
     @Step("Клик на элемент")
@@ -42,7 +38,6 @@ public class HomePage {
         driver.findElement(element).click();
     }
 
-
     @Step("Переход на страницу авторизации через кнопку \"Войти в аккаунт\"")
     public void loginAccountButtonClick() {
         clickButton(LOGIN_ACCOUNT_BUTTON);
@@ -51,5 +46,23 @@ public class HomePage {
     @Step("Нажимаем на кнопку \"Личный кабинет\"")
     public void personalAccountButtonClick() {
         clickButton(PERSONAL_ACCOUNT_BUTTON);
+    }
+
+    @Step("Нажимаем на кнопку раздела конструктора бургеров")
+    public void clickBurgerBuilderSection(String sectionName) {
+        switch (sectionName) {
+            case "Булки":
+                clickButton(BUNS);
+            case "Соусы":
+                clickButton(SAUCES);
+            case "Начинки":
+                clickButton(FILINGS);
+        }
+//
+//        try {
+//            TimeUnit.SECONDS.sleep(1);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }

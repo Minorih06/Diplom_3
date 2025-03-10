@@ -1,4 +1,5 @@
-import api.User;
+import constants.Endpoints;
+import model.User;
 import api.UserApi;
 import com.github.javafaker.Faker;
 import io.qameta.allure.Step;
@@ -25,26 +26,27 @@ public class RegistrationTest {
     private String accessToken;
     private boolean shouldDeleteUser = false;
 
-    private final String NAME = faker.name().firstName();
-    private final String EMAIL = faker.internet().emailAddress();
+    private final String name = faker.name().firstName();
+    private final String email = faker.internet().emailAddress();
     private final String PASSWORD = faker.internet().password();
 
+    private static final By ERROR_PASSWORD_TEXT = By.xpath(".//p[text()='Некорректный пароль']");
 
     @Before
     public void before() {
         browserUtilits = new BrowserUtilits(ConfigReader.getProperty("browser"));
         driver = browserUtilits.getDriver();
         driver.manage().window().maximize();
-        driver.get(browserUtilits.getURL("REGISTRATION_PAGE"));
+        driver.get(Endpoints.REGISTRATION_PAGE.toString());
     }
 
     @Test
     @DisplayName("Тест успешной регистрации пользователя")
     public void registrationUserTest() {
-        RestAssured.baseURI = userApi.URL;
+        RestAssured.baseURI = Endpoints.HOME_PAGE.toString();
         RegistrationPage registrationPage = new RegistrationPage(driver);
-        registrationPage.registration(NAME, EMAIL, PASSWORD);
-        User user = new User(EMAIL, PASSWORD);
+        registrationPage.registration(name, email, PASSWORD);
+        User user = new User(email, PASSWORD);
         Response response = userApi.loginUser(user);
         accessToken = userApi.getAccessToken(response);
         shouldDeleteUser = true;
@@ -57,7 +59,7 @@ public class RegistrationTest {
         RegistrationPage registrationPage = new RegistrationPage(driver);
         registrationPage.passwordInput(faker.internet().password(1, 5));
         driver.findElement(By.tagName("body")).click();
-        checkedIsVisible(registrationPage.getERROR_PASSWORD());
+        checkedIsVisible(ERROR_PASSWORD_TEXT);
     }
 
     @Step("Проверка видимости объекта")
