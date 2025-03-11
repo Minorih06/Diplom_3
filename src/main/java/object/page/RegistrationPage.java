@@ -29,6 +29,8 @@ public class RegistrationPage {
     //кнопка "Войти"
     private static final By LOGIN_BUTTON = By.linkText("Войти");
 
+    private static final By ERROR_PASSWORD_TEXT = By.xpath(".//p[text()='Некорректный пароль']");
+
     //Клик
     private void clickButton(By element) {
         driver.findElement(element).click();
@@ -71,4 +73,8 @@ public class RegistrationPage {
         clickButton(LOGIN_BUTTON);
     }
 
+    @Step("Находим элемент ERROR_PASSWORD_TEXT")
+    public WebElement findElementErrorPassword() {
+        return driver.findElement(ERROR_PASSWORD_TEXT);
+    }
 }

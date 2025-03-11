@@ -22,6 +22,7 @@ public class RegistrationTest {
     private WebDriver driver;
     private UserApi userApi = new UserApi();
     private Faker faker = new Faker();
+    private RegistrationPage registrationPage;
 
     private String accessToken;
     private boolean shouldDeleteUser = false;
@@ -30,21 +31,20 @@ public class RegistrationTest {
     private final String email = faker.internet().emailAddress();
     private final String PASSWORD = faker.internet().password();
 
-    private static final By ERROR_PASSWORD_TEXT = By.xpath(".//p[text()='Некорректный пароль']");
-
     @Before
     public void before() {
         browserUtilits = new BrowserUtilits(ConfigReader.getProperty("browser"));
         driver = browserUtilits.getDriver();
         driver.manage().window().maximize();
         driver.get(Endpoints.REGISTRATION_PAGE.toString());
+        registrationPage = new RegistrationPage(driver);
+
     }
 
     @Test
     @DisplayName("Тест успешной регистрации пользователя")
     public void registrationUserTest() {
         RestAssured.baseURI = Endpoints.HOME_PAGE.toString();
-        RegistrationPage registrationPage = new RegistrationPage(driver);
         registrationPage.registration(name, email, PASSWORD);
         User user = new User(email, PASSWORD);
         Response response = userApi.loginUser(user);
@@ -59,12 +59,12 @@ public class RegistrationTest {
         RegistrationPage registrationPage = new RegistrationPage(driver);
         registrationPage.passwordInput(faker.internet().password(1, 5));
         driver.findElement(By.tagName("body")).click();
-        checkedIsVisible(ERROR_PASSWORD_TEXT);
+        checkedIsVisible();
     }
 
-    @Step("Проверка видимости объекта")
-    public void checkedIsVisible(By element) {
-        assertEquals(true, driver.findElement(element).isDisplayed());
+    @Step("Проверка видимости ошибки пароля объекта")
+    public void checkedIsVisible() {
+        assertEquals(true, registrationPage.findElementErrorPassword().isDisplayed());
     }
 
     @After

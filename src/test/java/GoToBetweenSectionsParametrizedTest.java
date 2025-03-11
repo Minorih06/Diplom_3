@@ -23,16 +23,16 @@ public class GoToBetweenSectionsParametrizedTest {
     private WebDriver driver;
     private HomePage homePage;
 
-    private static final By FILLING_EXPECTED = By.xpath(".//img[@alt='Биокотлета из марсианской Магнолии']/..");
-    private static final By SAUCE_EXPECTED = By.xpath(".//img[@alt='Соус Spicy-X']/..");
-    private static final By BUN_EXPECTED = By.xpath(".//img[@alt='Флюоресцентная булка R2-D3']/..");
+    private static final String FILLING_EXPECTED = "Биокотлета из марсианской Магнолии";
+    private static final String SAUCE_EXPECTED = "Соус Spicy-X";
+    private static final String BUN_EXPECTED = "Флюоресцентная булка R2-D3";
 
     private final String section;
-    private final By expectedElement;
+    private final String expectedElement;
     private final boolean transitionSection; //необходимость переходной секции для активации инспектируемой секции
     private final String testName;
 
-    public GoToBetweenSectionsParametrizedTest(String section, By expectedElement, boolean transitionSection, String testName) {
+    public GoToBetweenSectionsParametrizedTest(String section, String expectedElement, boolean transitionSection, String testName) {
         this.section = section;
         this.expectedElement = expectedElement;
         this.transitionSection = transitionSection;
@@ -42,9 +42,9 @@ public class GoToBetweenSectionsParametrizedTest {
     @Parameterized.Parameters(name = "{index}: {3}")
     public static Object[][] getElements() {
         return new Object[][] {
-                {"Начинки", FILLING_EXPECTED, false, "\"Начинки\""},
-                {"Соусы", SAUCE_EXPECTED, false, "\"Соусы\""},
-                {"Булки", BUN_EXPECTED, true, "\"Булки\""}
+                {"Начинки", "Биокотлета из марсианской Магнолии", false, "\"Начинки\""},
+                {"Соусы", "Соус Spicy-X", false, "\"Соусы\""},
+                {"Булки", "Флюоресцентная булка R2-D3", true, "\"Булки\""}
         };
     }
 
@@ -66,17 +66,16 @@ public class GoToBetweenSectionsParametrizedTest {
             homePage.clickBurgerBuilderSection("Начинки");
         }
         homePage.clickBurgerBuilderSection(section);
-        WebElement webElement = driver.findElement(expectedElement);
-        checkedViewportIngredientsSection(webElement);
+        checkedViewportIngredientsSection(homePage.returnExpectedWebElement(expectedElement));
     }
 
     @Step("Проверка видимости ингредиентов секции")
-    public void checkedViewportIngredientsSection(WebElement webElement) {
+    public void checkedViewportIngredientsSection(WebElement expectedElement) {
         boolean isElementInViewport =
                 new WebDriverWait(driver, Duration.ofSeconds(1))
                         .until(
                                 driver -> {
-                                    Rectangle rect = webElement.getRect();
+                                    Rectangle rect = expectedElement.getRect();
                                     Dimension windowSize = driver.manage().window().getSize();
 
                                     return rect.getX() >= 0
